@@ -9,7 +9,52 @@
 </head>
 <body>
 <!-- TO DO: create layout using bootstrap -->
+    <!-- header -->
+    <header class="jumbotron">
+        <h1 class="display-6 text-center">Weather Dashboard</h1>
+    </header>
+    <!-- content in a container -->
+    <div class="container row">
+        <!-- Content here -->
+        <div class = "col-4">
+            <form>
+                <div class="form-group">
+                <label for="searchForCity">Search for a City:</label>
+                <input type="text" class="form-control" id="city" aria-describedby="city">
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
 
+            <!-- place for list of cities -->
+            <div class="card" style="width: 18rem;">
+                <ul class="list-group list-group-flush">
+                <li class="list-group-item">Austin</li>
+                <li class="list-group-item">Chicago</li>
+                <li class="list-group-item">New York</li>
+                </ul>
+                <div class="card-footer">
+                Card footer
+                </div>
+            </div>
+        </div>
+
+          <!-- card for weather display -->
+        <div class="card col-8">
+            <div class="card-body">
+                <h2 class="card-title" id = "currentCity">Atlanta</h5>
+                <p id = "temperature"></p>
+                <p id = "humidity"></p>
+                <p id = "windSpeed"></p>
+                <!-- TO DO create classes in CSS for UV index to display different colors -->
+                <p id = "UVIndex"></p>
+            </div>
+            <div class="card-body">
+                <h2 class="card-title" id = "forecast"></h5>
+            </div>
+        </div>
+
+
+    </div>
 
     <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
