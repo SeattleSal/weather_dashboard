@@ -32,6 +32,7 @@ function requestWeather(city){
         method: "GET"
       }).then(function(response) {
           displayWeather(response);
+          requestForecast(response);
     });
 
 }
@@ -70,6 +71,10 @@ function displayWeather(response) {
 
 }
 
+function requestForecast(response) {
+    console.log("requesting 5 day forecast!");
+}
+
 // kelvinToFarenheint
 // convert temperature in kelvin to Farenheight and return with only 2 decimals showing
 function kelvinToFarenheight(k) {
@@ -88,6 +93,6 @@ $(document).on("click", "#searchBtn", function (e) {
     // save city to local storage, make a function?, will need to check what else is stored
     localStorage.setItem('cities', currentCity);
 
-
+ 
 });
 
