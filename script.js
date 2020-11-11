@@ -2,21 +2,20 @@
 
 // variables
 var currentTime = moment();
+var cityEl = $("#city");
+var searchButton = $("#searchBtn");
 
 // functions
 function init() {
     console.log("starting the page!");
-    console.log(currentTime);
-
     // check local storage
     // if local storage is stored display in a list
 
-    // move the below to a function that listens for the user to enter a city
-    // or click on existing city listed on left side
     requestWeather();
 
-
 }
+
+
 
 // display current weather, humidity, UV 
 // display 5 day 
@@ -38,19 +37,23 @@ function requestWeather(){
 // displayWeather 
 // use response from the AJAX query to separate data and append to HTML
 function displayWeather(response) {
+    console.log(response);
     var currentDate = currentTime.format('L');
     var tempInfo = response.main;
-    var iconURL = "http://openweathermap.org/img/wn/10d@2x.png";
-    // var iconURL = `http://openweathermap.org/img/wn/${tempInfo.weather.icon}.png`;
-    var imgEl = $("<img>");
-    imgEl.attr("src", iconURL);
+    // var iconURL = "http://openweathermap.org/img/wn/10d@2x.png";
+    console.log(typeof icon);
 
-    console.log(response);
+    // get image to display, put into a function?
+    var icon = response.weather[0].icon;
+    var iconURL = `http://openweathermap.org/img/wn/${icon}.png`;
+    var iconEl = $("<img>");
+    iconEl.attr("src", iconURL);
+
     console.log(tempInfo);
 
     // append the weather info to html elements by ID
     $("#currentCity").append(`Seattle (${currentDate})`);
-    $("#currentCity").append(imgEl);
+    $("#currentCity").append(iconEl);
     $("#temperature").append(`Temperature: ${kelvinToFarenheight(tempInfo.temp)}&deg;F`);
     $("#humidity").append(`Humidity: ${tempInfo.humidity}&#37;`);
     $("#windSpeed").append(`Wind Speed: ${response.wind.speed} MPH`);
@@ -67,4 +70,10 @@ function kelvinToFarenheight(k) {
 // init page
 init();
 
-// add listeners for buttons
+// // add listeners for buttons
+// $(document).on("submit", "#searchBtn", searchCity);
+
+// function searchCity (event) {
+//     event.preventDefault();
+//     console.log("Search for ...");
+// }
