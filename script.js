@@ -5,6 +5,7 @@ var currentTime = moment();
 var cityEl = $("#city");
 var searchButton = $("#searchBtn");
 var pastCitiesList = $("#citiesPast");
+var apiKey = '44e826bcde4531a09656dda9bd53cee5';
 var currentCity;
 var storedCities; 
 
@@ -40,9 +41,9 @@ function init() {
 // display current weather, humidity, UV 
 // display 5 day 
 function requestWeather(city){
-    var apiKey = '44e826bcde4531a09656dda9bd53cee5';
+
     // var city = "seattle";
-    var queryURL = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`;
+    var queryURL = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&appid=${apiKey}`;
 
     // run ajax query
     $.ajax({
@@ -50,7 +51,10 @@ function requestWeather(city){
         method: "GET"
       }).then(function(response) {
           displayWeather(response);
-          requestForecast(response);
+          var lat = response.coord.lat;
+          var lon = response.coord.lon;
+          console.log(typeof lat, typeof lon);
+          requestForecast(lat, lon);
     });
 
 }
@@ -66,7 +70,7 @@ function displayWeather(response) {
     $("#windSpeed").empty();
     $("#UVIndex").empty();
 
-    // console.log(response);
+    console.log(response);
     var currentDate = currentTime.format('L');
     var tempInfo = response.main;
     // var iconURL = "http://openweathermap.org/img/wn/10d@2x.png";
@@ -82,22 +86,33 @@ function displayWeather(response) {
     // append the weather info to html elements by ID
     $("#currentCity").append(`${currentCity} (${currentDate})`);
     $("#currentCity").append(iconEl);
-    $("#temperature").append(`Temperature: ${kelvinToFarenheight(tempInfo.temp)}&deg;F`);
+    $("#temperature").append(`Temperature: ${tempInfo.temp}&deg;F`);
     $("#humidity").append(`Humidity: ${tempInfo.humidity}&#37;`);
     $("#windSpeed").append(`Wind Speed: ${response.wind.speed} MPH`);
     $("#UVIndex").append(`UV Index:`);
 
 }
 
-function requestForecast(response) {
-    console.log("requesting 5 day forecast!");
+function requestForecast(lat, lon) {
+    console.log("requesting 5 day forecast for " + lat + " , " + lon);
+    var forecastURL = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKey}`;
+    console.log(forecastURL);
+        // run ajax query
+    $.ajax({
+        url: forecastURL,
+        method: "GET"
+        }).then(function(response) {
+           console.log(response);
+           // will display date, icon, temp and humidity for five days
+    });
 }
 
+// NOT NEEDED - DELETE THIS!
 // kelvinToFarenheint
 // convert temperature in kelvin to Farenheight and return with only 2 decimals showing
-function kelvinToFarenheight(k) {
-    return ((k * (9 / 5)) - 459.67).toFixed(2);
-}
+// function kelvinToFarenheight(k) {
+//     return ((k * (9 / 5)) - 459.67).toFixed(2);
+// }
 
 // init page - shows current weather for seattle automatically
 init();
