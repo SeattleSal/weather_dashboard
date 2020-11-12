@@ -89,10 +89,11 @@ function displayWeather(response) {
 
 }
 
+// use onecall api to get 5 day forecast and uv
 function requestForecast(lat, lon) {
     // get 5 days of forecast for lat/long in units imperial (farenheight)
     // TO DO - this is getting 5 timestamps NOT 5 days
-    var forecastURL = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&cnt=5&units=imperial&appid=${apiKey}`;
+    var forecastURL = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKey}`;
     console.log(forecastURL);
 
     // run ajax query to openweather
@@ -100,7 +101,6 @@ function requestForecast(lat, lon) {
         url: forecastURL,
         method: "GET"
         }).then(function(response) {
-           console.log(response);
            displayForecast(response);
            // will display date, icon, temp and humidity for five days
     });
@@ -108,13 +108,14 @@ function requestForecast(lat, lon) {
 
 // displayForecast - display 5 cards of forecasted weather
 function displayForecast(response) {
-    console.log(response.list);
-    var forecastArr = response.list;
+    console.log(response.daily);
+    var forecastArr = response.daily;
     for (var i = 0; i < 5; i++) {
-        $(`#day${i +1}`).text(`Date: ${forecastArr[i].dt_txt} 
-            ICON PLACEHOLDER 
-            Temp: ${forecastArr[i].main.temp} 
-            Humidity: ${forecastArr[i].main.humidity}`);
+        var dateString = moment.unix(forecastArr[i].dt).format("MM/DD/YYYY");
+        $(`#day${i +1}`).text(`Date: ${dateString} 
+            ICON:  ${forecastArr[i].weather[0].icon}  
+            Temp: ${forecastArr[i].temp.max} ${String.fromCharCode(176)}F
+            Humidity: ${forecastArr[i].humidity}%`);
     }
 }
 
