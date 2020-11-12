@@ -4,16 +4,34 @@
 var currentTime = moment();
 var cityEl = $("#city");
 var searchButton = $("#searchBtn");
+var pastCitiesList = $("#citiesPast");
 var currentCity;
+var storedCities; 
 
 // functions
 function init() {
-    console.log("starting the page!");
     // check local storage
     // if local storage is stored display in a list
     currentCity = "Seattle";
 
     requestWeather(currentCity);
+
+    // get stored cities to display
+    storedCities = localStorage.getItem("cities");
+    // currently storing as a string, how do i store as an array or separate by ','
+    if (storedCities) {
+        var x = [];
+        x = storedCities.split(','); // becomes array of cities
+        // console.log(typeof x);
+        // console.log(x);
+        // TO DO: add code to create a list of the cities stored
+        for (var i = 0; i < x.length; i++) {
+            // var listEl = $("<li>");
+            // listEl.
+            pastCitiesList.append(`<li class="list-group-item">${x[i]}</li>`);
+        }
+        
+    }
 
 }
 
@@ -48,7 +66,7 @@ function displayWeather(response) {
     $("#windSpeed").empty();
     $("#UVIndex").empty();
 
-    console.log(response);
+    // console.log(response);
     var currentDate = currentTime.format('L');
     var tempInfo = response.main;
     // var iconURL = "http://openweathermap.org/img/wn/10d@2x.png";
@@ -59,7 +77,7 @@ function displayWeather(response) {
     var iconEl = $("<img>");
     iconEl.attr("src", iconURL);
 
-    console.log(tempInfo);
+    // console.log(tempInfo);
 
     // append the weather info to html elements by ID
     $("#currentCity").append(`${currentCity} (${currentDate})`);
@@ -81,7 +99,7 @@ function kelvinToFarenheight(k) {
     return ((k * (9 / 5)) - 459.67).toFixed(2);
 }
 
-// init page
+// init page - shows current weather for seattle automatically
 init();
 
 // // add listeners for buttons
@@ -91,7 +109,17 @@ $(document).on("click", "#searchBtn", function (e) {
     requestWeather(currentCity);
 
     // save city to local storage, make a function?, will need to check what else is stored
-    localStorage.setItem('cities', currentCity);
+    storedCities = localStorage.getItem("cities") || "";
+    if (storedCities == "") {
+        localStorage.setItem('cities', currentCity);
+    } else if (typeof storedCities === "string") {
+        console.log("one city stored");
+        var x = [];
+        x.push(storedCities, currentCity);
+        localStorage.setItem('cities', x);
+        console.log(localStorage.getItem("cities"));
+    } 
+    
 
  
 });
