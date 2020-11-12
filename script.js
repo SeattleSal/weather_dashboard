@@ -38,7 +38,6 @@ function displayCities() {
 // display 5 day 
 function requestWeather(city){
 
-    // var city = "seattle";
     var queryURL = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&appid=${apiKey}`;
 
     // run ajax query
@@ -108,6 +107,8 @@ function requestForecast(lat, lon) {
 
 // displayForecast - display 5 cards of forecasted weather
 function displayForecast(response) {
+    console.log("display forecast...");
+    // $("#day1").empty();
     console.log(response.daily);
     var forecastArr = response.daily;
     for (var i = 0; i < 5; i++) {
