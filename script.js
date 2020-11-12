@@ -16,26 +16,23 @@ function init() {
     currentCity = "Seattle";
 
     requestWeather(currentCity);
+    displayCities();
+};
 
+// function to display searched for citites
+function displayCities() {
+    pastCitiesList.empty();
     // get stored cities to display
     storedCities = localStorage.getItem("cities");
     // currently storing as a string, how do i store as an array or separate by ','
     if (storedCities) {
         var x = [];
         x = storedCities.split(','); // becomes array of cities
-        // console.log(typeof x);
-        // console.log(x);
-        // TO DO: add code to create a list of the cities stored
         for (var i = 0; i < x.length; i++) {
-            // var listEl = $("<li>");
-            // listEl.
-            pastCitiesList.append(`<li class="list-group-item">${x[i]}</li>`);
+            pastCitiesList.prepend(`<li class="list-group-item">${x[i]}</li>`);
         }
-        
     }
-
-}
-
+};
 
 
 // display current weather, humidity, UV 
@@ -94,30 +91,37 @@ function displayWeather(response) {
 }
 
 function requestForecast(lat, lon) {
-    console.log("requesting 5 day forecast for " + lat + " , " + lon);
-    var forecastURL = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKey}`;
+    // get 5 days of forecast for lat/long in units imperial (farenheight)
+    var forecastURL = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&cnt=5&units=imperial&appid=${apiKey}`;
     console.log(forecastURL);
-        // run ajax query
+
+    // run ajax query to openweather
     $.ajax({
         url: forecastURL,
         method: "GET"
         }).then(function(response) {
            console.log(response);
+           displayForecast(response);
            // will display date, icon, temp and humidity for five days
     });
 }
 
-// NOT NEEDED - DELETE THIS!
-// kelvinToFarenheint
-// convert temperature in kelvin to Farenheight and return with only 2 decimals showing
-// function kelvinToFarenheight(k) {
-//     return ((k * (9 / 5)) - 459.67).toFixed(2);
-// }
+// displayForecast - display 5 cards of forecasted weather
+function displayForecast(response) {
+    console.log(response.list);
+    var forecastArr = response.list;
+    for (var i = 0; i < 5; i++) {
+        $(`#day${i +1}`).text(`Date: ${forecastArr[i].dt_txt} 
+            ICON PLACEHOLDER 
+            Temp: ${forecastArr[i].main.temp} 
+            Humidity: ${forecastArr[i].main.humidity}`);
+    }
+}
 
-// init page - shows current weather for seattle automatically
+// init page - shows current weather for seattle automatically and any stored cities
 init();
 
-// // add listeners for buttons
+// when search is initiated
 $(document).on("click", "#searchBtn", function (e) {
     e.preventDefault();
     currentCity = cityEl.val();
@@ -134,8 +138,6 @@ $(document).on("click", "#searchBtn", function (e) {
         localStorage.setItem('cities', x);
         console.log(localStorage.getItem("cities"));
     } 
-    
-
- 
+    displayCities();
 });
 
