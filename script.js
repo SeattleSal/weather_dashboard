@@ -14,7 +14,6 @@ function init() {
     // check local storage
     // if local storage is stored display in a list
     currentCity = "Seattle";
-
     requestWeather(currentCity);
     displayCities();
 };
@@ -29,7 +28,7 @@ function displayCities() {
         var x = [];
         x = storedCities.split(','); // becomes array of cities
         for (var i = 0; i < x.length; i++) {
-            pastCitiesList.prepend(`<li class="list-group-item">${x[i]}</li>`);
+            pastCitiesList.prepend(`<li class="list-group-item" id=${x[i]}>${x[i]}</li>`);
         }
     }
 };
@@ -92,6 +91,7 @@ function displayWeather(response) {
 
 function requestForecast(lat, lon) {
     // get 5 days of forecast for lat/long in units imperial (farenheight)
+    // TO DO - this is getting 5 timestamps NOT 5 days
     var forecastURL = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&cnt=5&units=imperial&appid=${apiKey}`;
     console.log(forecastURL);
 
@@ -141,3 +141,10 @@ $(document).on("click", "#searchBtn", function (e) {
     displayCities();
 });
 
+//  listen for clicked past city in list
+$("#citiesPast").on("click", ".list-group-item", function(){
+
+    currentCity = $(this).attr("id");
+    console.log("City has been clicked!" + currentCity);
+    requestWeather(currentCity);
+});
