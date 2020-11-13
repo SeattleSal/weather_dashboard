@@ -12,19 +12,20 @@ var storedCities;
 
 // functions
 function init() {
-    // check local storage
-    // if local storage is stored display in a list
+    // default shows Seattle
     currentCity = "Seattle";
-    requestWeather(currentCity);
+    // if previous queries stored, display in a list
     displayCities();
+    // make call to request then display weather    
+    requestWeather(currentCity);
 };
 
-// function to display searched for citites
+// function to display stored searched for citites
 function displayCities() {
     pastCitiesList.empty();
-    // get stored cities to display
     storedCities = localStorage.getItem("cities");
     // currently storing as a string, how do i store as an array or separate by ','
+    // TO DO - fix so spaces are replaced with '_' or something
     if (storedCities) {
         var x = [];
         x = storedCities.split(','); // becomes array of cities
@@ -35,13 +36,10 @@ function displayCities() {
 };
 
 
-// display current weather, humidity, UV 
-// display 5 day 
+// requestWeather - make call to weatherAPI for city
 function requestWeather(city){
 
-    // This doesn't work...
-    // var coords = getCoordinates(city);
-    // console.log(getCoordinates(city));
+    // TO DO - can I replace this with a call to google maps instead?
 
     // get coordinates from first query to maps
     var queryURL = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&appid=${apiKeyMap}`;
@@ -52,11 +50,11 @@ function requestWeather(city){
           var lat = response.coord.lat;
           var lon = response.coord.lon;
           requestForecast(lat, lon);
-        //   displayWeather(response); 
     });
 
 }
 
+// TO DO - maybe delete this or replace it up in requestWeather function...
 function getCoordinates(city){
     var queryURL = `https://maps.googleapis.com/maps/api/geocode/json?address=${city}&key=${apiKeyGM}`;
     // console.log(queryURL);
@@ -76,11 +74,26 @@ function getCoordinates(city){
 
 }
 
-// displayWeather 
-// use response from the AJAX query to separate data and append to HTML
+// use openweather onecall api to get current forecast, 5 day forecast and uv
+function requestForecast(lat, lon) {
+    var forecastURL = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKeyMap}`;
+    // console.log(forecastURL);
+
+    // run ajax query to openweather onecall API
+    $.ajax({
+        url: forecastURL,
+        method: "GET"
+        }).then(function(response) {
+            // console.log(response);
+            displayWeather(response);
+            displayForecast(response);
+    });
+}
+
+// displayWeather - display current weather in top card
 function displayWeather(response) {
 
-    // create function to clear elements
+    // clear display elements
     $("#currentCity").empty();
     $("#temperature").empty();
     $("#humidity").empty();
@@ -97,48 +110,25 @@ function displayWeather(response) {
     var iconEl = $("<img>");
     iconEl.attr("src", iconURL);
 
-    // console.log(tempInfo);
-
-    // append the weather info to html elements by ID
+    // append the current weather info to html elements by ID
     $("#currentCity").append(`${currentCity} (${currentDate})`);
     $("#currentCity").append(iconEl);
     $("#temperature").append(`Temperature: ${tempInfo.temp}&deg;F`);
     $("#humidity").append(`Humidity: ${tempInfo.humidity}&#37;`);
     $("#windSpeed").append(`Wind Speed: ${tempInfo.wind_speed} MPH`);
     $("#UVIndex").append(`UV Index: ${tempInfo.uvi}`);
-
 }
 
-// use onecall api to get 5 day forecast and uv
-function requestForecast(lat, lon) {
-    // get 5 days of forecast for lat/long in units imperial (farenheight)
-    // TO DO - this is getting 5 timestamps NOT 5 days
-    var forecastURL = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKeyMap}`;
-    console.log(forecastURL);
-
-    // run ajax query to openweather
-    $.ajax({
-        url: forecastURL,
-        method: "GET"
-        }).then(function(response) {
-            console.log(response);
-            displayWeather(response);
-            displayForecast(response);
-            // will display date, icon, temp and humidity for five days
-    });
-}
-
-// displayForecast - display 5 cards of forecasted weather
+// displayForecast - display 5 days of forecasted weather
 function displayForecast(response) {
-    console.log("display forecast...");
-    // $("#day1").empty();
-    console.log(response.daily);
+    // console.log(response.daily);
     var forecastArr = response.daily;
-
         
     for (var i = 0; i < 5; i++) {
+        // empty html elements
         $(`#day${i +1}`).empty();
 
+        // format date
         var dateString = moment.unix(forecastArr[i].dt).format("MM/DD/YYYY");
 
         // build icon
@@ -147,6 +137,7 @@ function displayForecast(response) {
         var iconEl = $("<img>");
         iconEl.attr("src", iconURL);
 
+        // set html elements to display
         $(`#day${i +1}`).append(`Date: ${dateString}`); 
         $(`#day${i +1}`).append(iconEl); 
         $(`#day${i +1}`).append(`<br>`); 
@@ -179,10 +170,10 @@ $(document).on("click", "#searchBtn", function (e) {
     displayCities();
 });
 
-//  listen for clicked past city in list
+//  listen for click on list of past city searches
 $("#citiesPast").on("click", ".list-group-item", function(){
 
     currentCity = $(this).attr("id");
-    console.log("City has been clicked!" + currentCity);
+    // console.log("City has been clicked!" + currentCity);
     requestWeather(currentCity);
 });
