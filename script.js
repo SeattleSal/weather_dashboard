@@ -6,6 +6,7 @@ var cityEl = $("#city");
 var searchButton = $("#searchBtn");
 var pastCitiesList = $("#citiesPast");
 var apiKeyMap = '44e826bcde4531a09656dda9bd53cee5';
+// to do - remove all google map references if i don't use them after all
 var apiKeyGM = 'AIzaSyDGwKSGmGvgOL9oxOeskf9m1tQa4ors3I4';
 var currentCity;
 var storedCities; 
@@ -30,11 +31,19 @@ function displayCities() {
         var x = [];
         x = storedCities.split(','); // becomes array of cities
         for (var i = 0; i < x.length; i++) {
-            pastCitiesList.prepend(`<li class="list-group-item" id=${x[i]}>${x[i]}</li>`);
+            var cityFormatted = x[i].replace(/_/g, " ");
+            pastCitiesList.prepend(`<li class="list-group-item" id=${x[i]}>${cityFormatted}</li>`);
         }
+        pastCitiesList.append(`<button id="clear" class="btn btn-primary">Clear Cities</button>`);
     }
 };
 
+// click clear button - removes cities from local storage
+$(document).on("click", "#clear", function(){
+    console.log ("clear city list");
+    localStorage.removeItem("cities");
+    displayCities();
+});
 
 // requestWeather - make call to weatherAPI for city
 function requestWeather(city){
@@ -147,28 +156,34 @@ function displayForecast(response) {
     }
 }
 
-// init page - shows current weather for seattle automatically and any stored cities
-init();
-
-// when search is initiated
-$(document).on("click", "#searchBtn", function (e) {
+// searchRequested - when user searches for a city, request weather and store searched city
+function searchRequested (e) {
     e.preventDefault();
     currentCity = cityEl.val();
     requestWeather(currentCity);
 
+    var cityFormatted = currentCity.replace(/ /g, "_");
+
     // save city to local storage, make a function?, will need to check what else is stored
     storedCities = localStorage.getItem("cities") || "";
     if (storedCities == "") {
-        localStorage.setItem('cities', currentCity);
+        localStorage.setItem('cities', cityFormatted);
     } else if (typeof storedCities === "string") {
         console.log("one city stored");
         var x = [];
-        x.push(storedCities, currentCity);
+        x.push(storedCities, cityFormatted);
         localStorage.setItem('cities', x);
         console.log(localStorage.getItem("cities"));
     } 
     displayCities();
-});
+}
+
+// init page - shows current weather for seattle automatically and any stored cities
+init();
+
+// when search is initiated
+$(document).on("click", "#searchBtn", searchRequested);
+
 
 //  listen for click on list of past city searches
 $("#citiesPast").on("click", ".list-group-item", function(){
