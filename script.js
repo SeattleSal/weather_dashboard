@@ -5,7 +5,8 @@ var currentTime = moment();
 var cityEl = $("#city");
 var searchButton = $("#searchBtn");
 var pastCitiesList = $("#citiesPast");
-var apiKey = '44e826bcde4531a09656dda9bd53cee5';
+var apiKeyMap = '44e826bcde4531a09656dda9bd53cee5';
+var apiKeyGM = 'AIzaSyDGwKSGmGvgOL9oxOeskf9m1tQa4ors3I4';
 var currentCity;
 var storedCities; 
 
@@ -38,18 +39,39 @@ function displayCities() {
 // display 5 day 
 function requestWeather(city){
 
-    var queryURL = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&appid=${apiKey}`;
+    // This doesn't work...
+    // var coords = getCoordinates(city);
+    // console.log(getCoordinates(city));
 
-    // run ajax query
+    // get coordinates from first query to maps
+    var queryURL = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&appid=${apiKeyMap}`;
     $.ajax({
         url: queryURL,
         method: "GET"
       }).then(function(response) {
-          displayWeather(response);
           var lat = response.coord.lat;
           var lon = response.coord.lon;
-          console.log(typeof lat, typeof lon);
           requestForecast(lat, lon);
+        //   displayWeather(response); 
+    });
+
+}
+
+function getCoordinates(city){
+    var queryURL = `https://maps.googleapis.com/maps/api/geocode/json?address=${city}&key=${apiKeyGM}`;
+    // console.log(queryURL);
+    
+    // get lon and lat for city from google geocoding api
+    $.ajax({
+        url: queryURL,
+        method: "GET"
+      }).then(function(response) {
+          console.log(response.results[0].geometry.location);
+          var lat = response.results[0].geometry.location.lat;
+          var lon = response.results[0].geometry.location.lng;
+          var coords = `${lat} ${lon}`;
+          console.log(coords, typeof coords);
+          return coords;
     });
 
 }
@@ -65,13 +87,12 @@ function displayWeather(response) {
     $("#windSpeed").empty();
     $("#UVIndex").empty();
 
-    console.log(response);
+    // console.log(response);
     var currentDate = currentTime.format('L');
-    var tempInfo = response.main;
-    // var iconURL = "http://openweathermap.org/img/wn/10d@2x.png";
+    var tempInfo = response.current;
 
     // get image to display, put into a function?
-    var icon = response.weather[0].icon;
+    var icon = tempInfo.weather[0].icon;
     var iconURL = `http://openweathermap.org/img/wn/${icon}.png`;
     var iconEl = $("<img>");
     iconEl.attr("src", iconURL);
@@ -83,8 +104,8 @@ function displayWeather(response) {
     $("#currentCity").append(iconEl);
     $("#temperature").append(`Temperature: ${tempInfo.temp}&deg;F`);
     $("#humidity").append(`Humidity: ${tempInfo.humidity}&#37;`);
-    $("#windSpeed").append(`Wind Speed: ${response.wind.speed} MPH`);
-    $("#UVIndex").append(`UV Index:`);
+    $("#windSpeed").append(`Wind Speed: ${tempInfo.wind_speed} MPH`);
+    $("#UVIndex").append(`UV Index: ${tempInfo.uvi}`);
 
 }
 
@@ -92,7 +113,7 @@ function displayWeather(response) {
 function requestForecast(lat, lon) {
     // get 5 days of forecast for lat/long in units imperial (farenheight)
     // TO DO - this is getting 5 timestamps NOT 5 days
-    var forecastURL = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKey}`;
+    var forecastURL = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKeyMap}`;
     console.log(forecastURL);
 
     // run ajax query to openweather
@@ -100,8 +121,10 @@ function requestForecast(lat, lon) {
         url: forecastURL,
         method: "GET"
         }).then(function(response) {
-           displayForecast(response);
-           // will display date, icon, temp and humidity for five days
+            console.log(response);
+            displayWeather(response);
+            displayForecast(response);
+            // will display date, icon, temp and humidity for five days
     });
 }
 
@@ -111,12 +134,25 @@ function displayForecast(response) {
     // $("#day1").empty();
     console.log(response.daily);
     var forecastArr = response.daily;
+
+        
     for (var i = 0; i < 5; i++) {
+        $(`#day${i +1}`).empty();
+
         var dateString = moment.unix(forecastArr[i].dt).format("MM/DD/YYYY");
-        $(`#day${i +1}`).text(`Date: ${dateString} 
-            ICON:  ${forecastArr[i].weather[0].icon}  
-            Temp: ${forecastArr[i].temp.max} ${String.fromCharCode(176)}F
-            Humidity: ${forecastArr[i].humidity}%`);
+
+        // build icon
+        var icon = forecastArr[i].weather[0].icon;
+        var iconURL = `http://openweathermap.org/img/wn/${icon}.png`;
+        var iconEl = $("<img>");
+        iconEl.attr("src", iconURL);
+
+        $(`#day${i +1}`).append(`Date: ${dateString}`); 
+        $(`#day${i +1}`).append(iconEl); 
+        $(`#day${i +1}`).append(`<br>`); 
+        $(`#day${i +1}`).append(`Temp: ${forecastArr[i].temp.max} ${String.fromCharCode(176)}F`); 
+        $(`#day${i +1}`).append(`<br>`); 
+        $(`#day${i +1}`).append(`Humidity: ${forecastArr[i].humidity}%`); 
     }
 }
 
