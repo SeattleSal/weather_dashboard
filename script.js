@@ -32,6 +32,7 @@ function displayCities() {
         x = storedCities.split(','); // becomes array of cities
         for (var i = 0; i < x.length; i++) {
             var cityFormatted = x[i].replace(/_/g, " ");
+            // console.log(cityFormatted);
             pastCitiesList.prepend(`<li class="list-group-item" id=${x[i]}>${cityFormatted}</li>`);
         }
         pastCitiesList.append(`<button id="clear" class="btn btn-primary">Clear Cities</button>`);
@@ -52,6 +53,7 @@ function requestWeather(city){
 
     // get coordinates from first query to maps
     var queryURL = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&appid=${apiKeyMap}`;
+   console.log(queryURL);
     $.ajax({
         url: queryURL,
         method: "GET"
@@ -66,7 +68,7 @@ function requestWeather(city){
 // TO DO - maybe delete this or replace it up in requestWeather function...
 function getCoordinates(city){
     var queryURL = `https://maps.googleapis.com/maps/api/geocode/json?address=${city}&key=${apiKeyGM}`;
-    // console.log(queryURL);
+    console.log(queryURL);
     
     // get lon and lat for city from google geocoding api
     $.ajax({
@@ -188,7 +190,8 @@ $(document).on("click", "#searchBtn", searchRequested);
 //  listen for click on list of past city searches
 $("#citiesPast").on("click", ".list-group-item", function(){
 
-    currentCity = $(this).attr("id");
+    // get city name clicked on and replace "_" with " " if needed
+    currentCity = $(this).attr("id").replace(/_/g, " ");
     // console.log("City has been clicked!" + currentCity);
     requestWeather(currentCity);
 });
