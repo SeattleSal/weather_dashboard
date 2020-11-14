@@ -189,14 +189,15 @@ function searchRequested (e) {
 
     // save city to local storage, make a function?, will need to check what else is stored
     storedCities = localStorage.getItem("cities") || "";
+    console.log(`not stored? ${!storedCities.includes(cityFormatted)}`);
     if (storedCities == "") {
         localStorage.setItem('cities', cityFormatted);
-    } else if (typeof storedCities === "string") {
+    } else if (typeof storedCities === "string" && !storedCities.includes(cityFormatted)) {
         var x = [];
         x.push(storedCities, cityFormatted);
         console.log(JSON.stringify(x));
         localStorage.setItem('cities', x);
-        console.log(localStorage.getItem("cities"));
+        console.log(localStorage.getItem('cities'));
     } 
     displayCities();
     localStorage.setItem("lastCity", currentCity);
