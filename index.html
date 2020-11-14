@@ -16,11 +16,11 @@
     </header>
     <!-- content in a container -->
     <div class="container row">
-        <!-- Content here -->
+        <!-- search and prior city searches -->
         <div class = "col-2">
             <form>
                 <div class="form-group">
-                <label for="searchForCity">Search for a City:</label>
+                <h4 for="searchForCity">Search for a City:</h4>
                 <input type="text" class="form-control" id="city" aria-describedby="city">
                 </div>
                 <button id = "searchBtn" class="btn btn-primary">Submit</button>
@@ -34,51 +34,50 @@
             </div>
         </div>
 
-          <!-- card for weather display -->
+          <!-- card for weather display and 5 day forecast-->
         <div class="card col-10">
-            <div class="card-body">
+            <div class="card-body" style="width:100%">
                 <h2 class="card-title city-name" id = "currentCity"></h5>
                 <p id = "temperature"></p>
                 <p id = "humidity"></p>
                 <p id = "windSpeed"></p>
-                <!-- TO DO create classes in CSS for UV index to display different colors -->
                 <p id = "UVIndex"></p>
             </div>
             <!-- TO DO : need to move this into its own container... -->
             <div class="container-fluid ">
                 <h2 class="card-title" id = "5DayForecast">5-Day Forecast</h5>
-                <div class = "container-fluid row">
-                    <div class="card bg-primary text-light d-inline col" style="width: 15rem;">
+                <div class = "container-fluid row card-columns" style="width: 100%">
+                    <div class="card bg-primary text-light d-inline col" >
                         <div class="card-body">
-                        <h5 class="card-title">Day 1</h5>
+                        <h5 class="card-title" id="day1-date"></h5>
                         <!-- <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6> -->
                         <p class="card-text .text-light" id = "day1"></p>
                         </div>
                     </div>
                     <div class="card bg-primary text-light d-inline col" style="width: 10rem;">
                         <div class="card-body">
-                        <h5 class="card-title">Day 2</h5>
+                        <h5 class="card-title" id="day2-date"></h5>
                         <!-- <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6> -->
                         <p class="card-text" id = "day2"></p>
                         </div>
                     </div>
                     <div class="card bg-primary text-light d-inline col" style="width: 10rem;">
                         <div class="card-body">
-                        <h5 class="card-title">Day 3</h5>
+                        <h5 class="card-title" id="day3-date"></h5>
                         <!-- <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6> -->
                         <p class="card-text" id = "day3"></p>
                         </div>
                     </div>
                     <div class="card bg-primary text-light d-inline col" style="width: 10rem;">
                         <div class="card-body">
-                        <h5 class="card-title">Day 4</h5>
+                        <h5 class="card-title" id="day4-date"></h5>
                         <!-- <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6> -->
                         <p class="card-text" id = "day4"></p>
                         </div>
                     </div>
                     <div class="card bg-primary text-light d-inline col" style="width: 10rem;">
                         <div class="card-body">
-                        <h5 class="card-title">Day 5</h5>
+                        <h5 class="card-title" id="day5-date"></h5>
                         <!-- <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6> -->
                         <p class="card-text" id = "day5"></p>
                         </div>

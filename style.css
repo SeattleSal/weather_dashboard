@@ -4,11 +4,10 @@
     height: 60px;
 }
 
-/* always display city as upper case first char, rest lower case */
-/* .city-name {
-    text-transform: lowercase;
+.card-body {
+    padding: 1.25em 1px 1.25em 1px;
 }
 
-.city-name:first-letter {
-    text-transform: capitalize;
-} */
+.container-fluid {
+    padding-right: 1px;
+}

@@ -1,35 +1,15 @@
-# weather_dashboard
+# Weather Dashboard
 
 ## Table of Contents
 * [Description](#description)
 * [Links](#links)
 * [Use](#use)
-* [Responsiveness](#responsiveness)
 * [Screenshots](#screenshots)
 * [References](#references)
 * [License](#license)
 
 ## Description
 This is a weather dashboard that will run in the browser and display current weather along with a five day forecast for user entered cities. The weather dashboard is created using dynamically updated HTML and CSS. It utilizes a 3rd party API to retrieve weather information [OpenWeather API](https://openweathermap.org/api). 
-
-### User Story
-
-```
-AS A traveler
-I WANT to see the weather outlook for multiple cities
-SO THAT I can plan a trip accordingly
-```
-
-### Acceptance Criteria
-
-```
-
-WHEN I view the UV index
-THEN I am presented with a color that indicates whether the conditions are favorable, moderate, or severe
-WHEN I view future weather conditions for that city
-WHEN I open the weather dashboard
-THEN I am presented with the last searched city forecast
-```
 
 ## Links
 * [Weather Dashboard Website](https://seattlesal.github.io/weather_dashboard/)
@@ -38,12 +18,9 @@ THEN I am presented with the last searched city forecast
 ## Use
 The default display shows Seattle weather information. The user can enter a city name and the display will update with current weather information (temperature, humidity, wind speed, uv rating) and a 5 day forecast. Searched cities are stored and displayed in a list on the left side of the page. The user can click on a city in the prior query list and the weather for that city will display. The user can also clear the list of cities queried. 
 
-## Responsiveness
-TO DO The layout responds and adapts to differen screen sizes using Bootstrap grid styling.
-
 ## Screenshots
 Weather Dashboard: <br>
-![Weather Dashboard](./assets/img/dashboard_screenshot.png)
+![Weather Dashboard](.\assets\img\dashboard-screenshot.png)
 
 ## References
 The following libraries were used to style and/or create functionality:

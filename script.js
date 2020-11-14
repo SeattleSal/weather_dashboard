@@ -6,14 +6,13 @@ var cityEl = $("#city");
 var searchButton = $("#searchBtn");
 var pastCitiesList = $("#citiesPast");
 var apiKeyMap = '44e826bcde4531a09656dda9bd53cee5';
-// to do - remove all google map references if i don't use them after all
 var apiKeyGM = 'AIzaSyDGwKSGmGvgOL9oxOeskf9m1tQa4ors3I4';
 var currentCity;
 var storedCities; 
 
 // functions
+// init - initialize page showing weather of last city searched or Seattle if no last city searched
 function init() {
-    // default shows Seattle
     currentCity = localStorage.getItem("lastCity") || "Seattle";
     // if previous queries stored, display in a list
     displayCities();
@@ -21,39 +20,34 @@ function init() {
     requestWeather(currentCity);
 };
 
-// function to display stored searched for citites
+// displayCities - display stored searched for citites
 function displayCities() {
+    // empty list element
     pastCitiesList.empty();
     storedCities = localStorage.getItem("cities") || "";
-    console.log(storedCities);
-    // currently storing as a string, how do i store as an array or separate by ','
-    // TO DO - fix so spaces are replaced with '_' or something
+    // console.log(storedCities);
+
     if (storedCities) {
         var x = [];
         x = storedCities.split(','); // becomes array of cities
         for (var i = 0; i < x.length; i++) {
+            // names are stored with spaces replaced with "_" so revert back to spaces
             var cityFormatted = x[i].replace(/_/g, " ");
-            // console.log(cityFormatted);
             pastCitiesList.prepend(`<li class="list-group-item city-name" id=${x[i]}>${cityFormatted}</li>`);
         }
         pastCitiesList.append(`<button id="clear" class="btn btn-primary">Clear Cities</button>`);
     }
 };
 
-// click clear button - removes cities from local storage
-$(document).on("click", "#clear", function(){
-    localStorage.removeItem("cities");
-    displayCities();
-});
+
 
 // requestWeather - make call to weatherAPI for city
 function requestWeather(city){
 
     // TO DO - can I replace this with a call to google maps instead?
-
     // get coordinates from first query to maps
    var queryURL = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&appid=${apiKeyMap}`;
-   console.log(queryURL);
+    //    console.log(queryURL);
     $.ajax({
         url: queryURL,
         method: "GET"
@@ -85,17 +79,16 @@ function getCoordinates(city){
 
 }
 
-// use openweather onecall api to get current forecast, 5 day forecast and uv
+// requestForecast - use openweather onecall api to get current forecast, 5 day forecast and uv
 function requestForecast(lat, lon) {
     var forecastURL = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKeyMap}`;
     // console.log(forecastURL);
-
     // run ajax query to openweather onecall API
     $.ajax({
         url: forecastURL,
         method: "GET"
         }).then(function(response) {
-            console.log(response);
+            // console.log(response);
             displayWeather(response);
             displayForecast(response);
         }).fail(function (response) { // this isn't working...
@@ -156,24 +149,25 @@ function displayForecast(response) {
         
     for (var i = 0; i < 5; i++) {
         // empty html elements
-        $(`#day${i +1}`).empty();
+        var dayIndex = i+1;
+        $(`#day${dayIndex}`).empty();
 
         // format date
         var dateString = moment.unix(forecastArr[i].dt).format("MM/DD/YYYY");
 
-        // build icon
+        // build img element for weather icon
         var icon = forecastArr[i].weather[0].icon;
         var iconURL = `http://openweathermap.org/img/wn/${icon}.png`;
         var iconEl = $("<img>");
         iconEl.attr("src", iconURL);
 
         // set html elements to display
-        $(`#day${i +1}`).append(`Date: ${dateString}`); 
-        $(`#day${i +1}`).append(iconEl); 
-        $(`#day${i +1}`).append(`<br>`); 
-        $(`#day${i +1}`).append(`Temp: ${forecastArr[i].temp.max} ${String.fromCharCode(176)}F`); 
-        $(`#day${i +1}`).append(`<br>`); 
-        $(`#day${i +1}`).append(`Humidity: ${forecastArr[i].humidity}%`); 
+        $(`#day${dayIndex}-date`).text(`${dateString}`); 
+        $(`#day${dayIndex}`).append(iconEl); 
+        $(`#day${dayIndex}`).append(`<br>`); 
+        $(`#day${dayIndex}`).append(`Temp: ${forecastArr[i].temp.max} ${String.fromCharCode(176)}F`); 
+        $(`#day${dayIndex}`).append(`<br>`); 
+        $(`#day${dayIndex}`).append(`Humidity: ${forecastArr[i].humidity}%`); 
     }
 }
 
@@ -182,28 +176,28 @@ function searchRequested (e) {
     e.preventDefault();
     currentCity = cityEl.val();
     currentCity = capitalize(currentCity);
-    // console.log(currentCity);
     requestWeather(currentCity);
 
+    // replace spaces with underscores for storage
     var cityFormatted = currentCity.replace(/ /g, "_");
 
-    // save city to local storage, make a function?, will need to check what else is stored
+    // add cities to local storage, if already stored do not add
     storedCities = localStorage.getItem("cities") || "";
-    console.log(`not stored? ${!storedCities.includes(cityFormatted)}`);
+    // console.log(`not stored? ${!storedCities.includes(cityFormatted)}`);
     if (storedCities == "") {
         localStorage.setItem('cities', cityFormatted);
     } else if (typeof storedCities === "string" && !storedCities.includes(cityFormatted)) {
         var x = [];
         x.push(storedCities, cityFormatted);
-        console.log(JSON.stringify(x));
         localStorage.setItem('cities', x);
-        console.log(localStorage.getItem('cities'));
+        // console.log(localStorage.getItem('cities'));
     } 
     displayCities();
     localStorage.setItem("lastCity", currentCity);
 }
 
 // capitalize the string as String - do I need to keep this?
+// source: https://stackoverflow.com/questions/5122402/uppercase-first-letter-of-variable
 function capitalize(str) {
     var strVal = '';
     str = str.split(' ');
@@ -213,17 +207,22 @@ function capitalize(str) {
     return strVal
 } 
 
-// init page - shows current weather for seattle automatically and any stored cities
+// init page and listeners
+// init page - shows current weather for last city searched or seattle if no last city
 init();
 
 // when search is initiated
 $(document).on("click", "#searchBtn", searchRequested);
 
-//  listen for click on list of past city searches
+// when a past city searched is clicked on
 $("#citiesPast").on("click", ".list-group-item", function(){
-
     // get city name clicked on and replace "_" with " " if needed
     currentCity = $(this).attr("id").replace(/_/g, " ");
-    // console.log("City has been clicked!" + currentCity);
     requestWeather(currentCity);
+});
+
+// when the clear button is clicked, removes cities from local storage
+$(document).on("click", "#clear", function(){
+    localStorage.removeItem("cities");
+    displayCities();
 });
