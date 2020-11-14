@@ -33,7 +33,7 @@ function displayCities() {
         for (var i = 0; i < x.length; i++) {
             var cityFormatted = x[i].replace(/_/g, " ");
             // console.log(cityFormatted);
-            pastCitiesList.prepend(`<li class="list-group-item" id=${x[i]}>${cityFormatted}</li>`);
+            pastCitiesList.prepend(`<li class="list-group-item city-name" id=${x[i]}>${cityFormatted}</li>`);
         }
         pastCitiesList.append(`<button id="clear" class="btn btn-primary">Clear Cities</button>`);
     }
@@ -95,10 +95,12 @@ function requestForecast(lat, lon) {
         url: forecastURL,
         method: "GET"
         }).then(function(response) {
-            // console.log(response);
+            console.log(response);
             displayWeather(response);
             displayForecast(response);
-    });
+        }).fail(function (response) { // this isn't working...
+            alert("City not found!");
+        });
 }
 
 // displayWeather - display current weather in top card
@@ -162,6 +164,11 @@ function displayForecast(response) {
 function searchRequested (e) {
     e.preventDefault();
     currentCity = cityEl.val();
+    currentCity = capitalize(currentCity);
+    console.log(currentCity);
+    // currentCity = currentCity.toLowerCase();
+    // currentCity[0] = currentCity[0].toUpperCase();
+    // console.log(currentCity[0].toUpperCase(), currentCity[0], currentCity);
     requestWeather(currentCity);
 
     var cityFormatted = currentCity.replace(/ /g, "_");
@@ -171,7 +178,6 @@ function searchRequested (e) {
     if (storedCities == "") {
         localStorage.setItem('cities', cityFormatted);
     } else if (typeof storedCities === "string") {
-        console.log("one city stored");
         var x = [];
         x.push(storedCities, cityFormatted);
         localStorage.setItem('cities', x);
@@ -179,6 +185,15 @@ function searchRequested (e) {
     } 
     displayCities();
 }
+
+function capitalize(str) {
+    var strVal = '';
+    str = str.split(' ');
+    for (var chr = 0; chr < str.length; chr++) {
+      strVal += str[chr].substring(0, 1).toUpperCase() + str[chr].substring(1, str[chr].length) + ' '
+    }
+    return strVal
+} 
 
 // init page - shows current weather for seattle automatically and any stored cities
 init();

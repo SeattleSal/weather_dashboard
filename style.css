@@ -3,3 +3,12 @@
 .jumbotron {
     height: 60px;
 }
+
+/* always display city as upper case first char, rest lower case */
+/* .city-name {
+    text-transform: lowercase;
+}
+
+.city-name:first-letter {
+    text-transform: capitalize;
+} */
