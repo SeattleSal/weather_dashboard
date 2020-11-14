@@ -112,6 +112,7 @@ function displayWeather(response) {
     $("#humidity").empty();
     $("#windSpeed").empty();
     $("#UVIndex").empty();
+    $("#UVIndex").removeClass();
 
     // console.log(response);
     var currentDate = currentTime.format('L');
@@ -123,6 +124,9 @@ function displayWeather(response) {
     var iconEl = $("<img>");
     iconEl.attr("src", iconURL);
 
+    var uvClass = getUVClass(tempInfo.uvi);
+    console.log(uvClass);
+
     // append the current weather info to html elements by ID
     $("#currentCity").append(`${currentCity} (${currentDate})`);
     $("#currentCity").append(iconEl);
@@ -130,6 +134,20 @@ function displayWeather(response) {
     $("#humidity").append(`Humidity: ${tempInfo.humidity}&#37;`);
     $("#windSpeed").append(`Wind Speed: ${tempInfo.wind_speed} MPH`);
     $("#UVIndex").append(`UV Index: ${tempInfo.uvi}`);
+    $("#UVIndex").addClass(uvClass);
+}
+
+// getUVClass - determine color (class) for UV rating
+function getUVClass (uv) {
+    var colorClass;
+    if (uv <=2 ) {
+        colorClass = "badge badge-success"; // green
+    } else if (uv > 2 && uv < 6) {
+        colorClass = "badge badge-warning"; // yellow
+    } else if (uv >= 6) {
+        colorClass = "badge badge-danger"; // red
+    }
+    return colorClass;
 }
 
 // displayForecast - display 5 days of forecasted weather
