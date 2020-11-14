@@ -14,7 +14,7 @@ var storedCities;
 // functions
 function init() {
     // default shows Seattle
-    currentCity = "Seattle";
+    currentCity = localStorage.getItem("lastCity") || "Seattle";
     // if previous queries stored, display in a list
     displayCities();
     // make call to request then display weather    
@@ -24,7 +24,8 @@ function init() {
 // function to display stored searched for citites
 function displayCities() {
     pastCitiesList.empty();
-    storedCities = localStorage.getItem("cities");
+    storedCities = localStorage.getItem("cities") || "";
+    console.log(storedCities);
     // currently storing as a string, how do i store as an array or separate by ','
     // TO DO - fix so spaces are replaced with '_' or something
     if (storedCities) {
@@ -41,7 +42,6 @@ function displayCities() {
 
 // click clear button - removes cities from local storage
 $(document).on("click", "#clear", function(){
-    console.log ("clear city list");
     localStorage.removeItem("cities");
     displayCities();
 });
@@ -52,7 +52,7 @@ function requestWeather(city){
     // TO DO - can I replace this with a call to google maps instead?
 
     // get coordinates from first query to maps
-    var queryURL = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&appid=${apiKeyMap}`;
+   var queryURL = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&appid=${apiKeyMap}`;
    console.log(queryURL);
     $.ajax({
         url: queryURL,
@@ -68,7 +68,7 @@ function requestWeather(city){
 // TO DO - maybe delete this or replace it up in requestWeather function...
 function getCoordinates(city){
     var queryURL = `https://maps.googleapis.com/maps/api/geocode/json?address=${city}&key=${apiKeyGM}`;
-    console.log(queryURL);
+    // console.log(queryURL);
     
     // get lon and lat for city from google geocoding api
     $.ajax({
@@ -99,7 +99,7 @@ function requestForecast(lat, lon) {
             displayWeather(response);
             displayForecast(response);
         }).fail(function (response) { // this isn't working...
-            alert("City not found!");
+            console.log("I got a 404!");
         });
 }
 
@@ -114,18 +114,17 @@ function displayWeather(response) {
     $("#UVIndex").empty();
     $("#UVIndex").removeClass();
 
-    // console.log(response);
     var currentDate = currentTime.format('L');
     var tempInfo = response.current;
 
-    // get image to display, put into a function?
+    // get image to display
     var icon = tempInfo.weather[0].icon;
     var iconURL = `http://openweathermap.org/img/wn/${icon}.png`;
     var iconEl = $("<img>");
     iconEl.attr("src", iconURL);
 
+    // get class info for uv to show color based on uv level
     var uvClass = getUVClass(tempInfo.uvi);
-    console.log(uvClass);
 
     // append the current weather info to html elements by ID
     $("#currentCity").append(`${currentCity} (${currentDate})`);
@@ -183,10 +182,7 @@ function searchRequested (e) {
     e.preventDefault();
     currentCity = cityEl.val();
     currentCity = capitalize(currentCity);
-    console.log(currentCity);
-    // currentCity = currentCity.toLowerCase();
-    // currentCity[0] = currentCity[0].toUpperCase();
-    // console.log(currentCity[0].toUpperCase(), currentCity[0], currentCity);
+    // console.log(currentCity);
     requestWeather(currentCity);
 
     var cityFormatted = currentCity.replace(/ /g, "_");
@@ -198,12 +194,15 @@ function searchRequested (e) {
     } else if (typeof storedCities === "string") {
         var x = [];
         x.push(storedCities, cityFormatted);
+        console.log(JSON.stringify(x));
         localStorage.setItem('cities', x);
         console.log(localStorage.getItem("cities"));
     } 
     displayCities();
+    localStorage.setItem("lastCity", currentCity);
 }
 
+// capitalize the string as String - do I need to keep this?
 function capitalize(str) {
     var strVal = '';
     str = str.split(' ');
@@ -218,7 +217,6 @@ init();
 
 // when search is initiated
 $(document).on("click", "#searchBtn", searchRequested);
-
 
 //  listen for click on list of past city searches
 $("#citiesPast").on("click", ".list-group-item", function(){
