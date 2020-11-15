@@ -15,7 +15,7 @@ var storedCities;
 function init() {
     currentCity = localStorage.getItem("lastCity") || "";
     if (currentCity == "") {
-        resultsEl.addClass("hidden");
+        resultsEl.addClass("invisible");
     } else {
         // if previous queries stored, display in a list and request current weather
         displayCities();
@@ -26,7 +26,7 @@ function init() {
 // displayCities - display stored searched for citites
 function displayCities() {
     // show results elements and empty list element
-    resultsEl.removeClass("hidden");
+    resultsEl.removeClass("invisible");
     pastCitiesList.empty();
 
     storedCities = localStorage.getItem("cities") || "";
