@@ -11,27 +11,26 @@ var currentCity;
 var storedCities; 
 
 // FUNCTIONS
-// init - initialize page showing weather of last city searched or Seattle if no last city searched
+// init - initialize page showing weather of last city searched or blank if no last city searched
 function init() {
     currentCity = localStorage.getItem("lastCity") || "";
     if (currentCity == "") {
         resultsEl.addClass("hidden");
     } else {
-        // if previous queries stored, display in a list
+        // if previous queries stored, display in a list and request current weather
         displayCities();
-        // make call to request then display weather    
         requestWeather(currentCity);
     }
 };
 
 // displayCities - display stored searched for citites
 function displayCities() {
-    // empty list element
+    // show results elements and empty list element
     resultsEl.removeClass("hidden");
     pastCitiesList.empty();
+
     storedCities = localStorage.getItem("cities") || "";
     // console.log(storedCities);
-
     if (storedCities) {
         var x = [];
         x = storedCities.split(','); // becomes array of cities
@@ -148,10 +147,9 @@ function displayForecast(response) {
     // console.log(response.daily);
     var forecastArr = response.daily;
         
-    for (var i = 0; i < 5; i++) {
+    for (var i = 1; i < 6; i++) {
         // empty html elements
-        var dayIndex = i+1;
-        $(`#day${dayIndex}`).empty();
+        $(`#day${i}`).empty();
 
         // format date
         var dateString = moment.unix(forecastArr[i].dt).format("MM/DD/YYYY");
@@ -163,18 +161,23 @@ function displayForecast(response) {
         iconEl.attr("src", iconURL);
 
         // set html elements to display
-        $(`#day${dayIndex}-date`).text(`${dateString}`); 
-        $(`#day${dayIndex}`).append(iconEl); 
-        $(`#day${dayIndex}`).append(`<br>`); 
-        $(`#day${dayIndex}`).append(`Temp: ${forecastArr[i].temp.max} ${String.fromCharCode(176)}F`); 
-        $(`#day${dayIndex}`).append(`<br>`); 
-        $(`#day${dayIndex}`).append(`Humidity: ${forecastArr[i].humidity}%`); 
+        $(`#day${i}-date`).text(`${dateString}`); 
+        $(`#day${i}`).append(iconEl); 
+        $(`#day${i}`).append(`<br>`); 
+        $(`#day${i}`).append(`Temp: ${forecastArr[i].temp.max} ${String.fromCharCode(176)}F`); 
+        $(`#day${i}`).append(`<br>`); 
+        $(`#day${i}`).append(`Humidity: ${forecastArr[i].humidity}%`); 
     }
 }
 
 // searchRequested - when user searches for a city, request weather and store searched city
 function searchRequested (e) {
     e.preventDefault();
+    // if nothing is entered, exit function
+    if(cityEl.val() == "") {
+        return;
+    }
+
     currentCity = cityEl.val();
     currentCity = capitalize(currentCity);
     requestWeather(currentCity);
