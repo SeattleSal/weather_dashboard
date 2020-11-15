@@ -1,28 +1,33 @@
-// script for weather_dashboard
-
-// variables
+// java script for weather_dashboard
+// VARIABLES
 var currentTime = moment();
 var cityEl = $("#city");
 var searchButton = $("#searchBtn");
 var pastCitiesList = $("#citiesPast");
+var resultsEl = $("#results");
 var apiKeyMap = '44e826bcde4531a09656dda9bd53cee5';
 var apiKeyGM = 'AIzaSyDGwKSGmGvgOL9oxOeskf9m1tQa4ors3I4';
 var currentCity;
 var storedCities; 
 
-// functions
+// FUNCTIONS
 // init - initialize page showing weather of last city searched or Seattle if no last city searched
 function init() {
-    currentCity = localStorage.getItem("lastCity") || "Seattle";
-    // if previous queries stored, display in a list
-    displayCities();
-    // make call to request then display weather    
-    requestWeather(currentCity);
+    currentCity = localStorage.getItem("lastCity") || "";
+    if (currentCity == "") {
+        resultsEl.addClass("hidden");
+    } else {
+        // if previous queries stored, display in a list
+        displayCities();
+        // make call to request then display weather    
+        requestWeather(currentCity);
+    }
 };
 
 // displayCities - display stored searched for citites
 function displayCities() {
     // empty list element
+    resultsEl.removeClass("hidden");
     pastCitiesList.empty();
     storedCities = localStorage.getItem("cities") || "";
     // console.log(storedCities);
@@ -39,8 +44,6 @@ function displayCities() {
     }
 };
 
-
-
 // requestWeather - make call to weatherAPI for city
 function requestWeather(city){
 
@@ -56,7 +59,6 @@ function requestWeather(city){
           var lon = response.coord.lon;
           requestForecast(lat, lon);
     });
-
 }
 
 // TO DO - maybe delete this or replace it up in requestWeather function...
@@ -76,7 +78,6 @@ function getCoordinates(city){
           console.log(coords, typeof coords);
           return coords;
     });
-
 }
 
 // requestForecast - use openweather onecall api to get current forecast, 5 day forecast and uv
@@ -207,7 +208,7 @@ function capitalize(str) {
     return strVal
 } 
 
-// init page and listeners
+// FUNCTION CALLS AND LISTENERS
 // init page - shows current weather for last city searched or seattle if no last city
 init();
 

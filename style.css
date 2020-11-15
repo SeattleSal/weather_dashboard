@@ -1,4 +1,4 @@
-/* TO DO create classes in CSS for UV index to display different colors */
+/* CSS FOR WEATHER_DASHBOARD */
 
 .jumbotron {
     height: 60px;
@@ -11,3 +11,8 @@
 .container-fluid {
     padding-right: 1px;
 }
+
+.hidden {
+    display:none;
+}
+
