@@ -1,24 +1,10 @@
 /* CSS FOR WEATHER_DASHBOARD */
 
 .jumbotron {
-    height: 60px;
     background-color: #303c6c;
 }
 
-/* body {
-    background-color: #D1E8E2;
-} */
 
-/* .card {
-    background-color: #eae7dc;
-} */
 
-.card-body {
-    padding: 1.25em 1px 1.25em 1px;
-}
-
-.container-fluid {
-    padding-right: 1px;
-}
 
 
