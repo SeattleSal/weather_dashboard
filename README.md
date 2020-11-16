@@ -29,6 +29,7 @@ The following libraries were used to style and/or create functionality:
 * [Bootstrap](https://getbootstrap.com/)
 * [Font Awesome](https://fontawesome.com/)
 * [jQuery](https://jquery.com/)
+* [Stack Overflow - Formatting Text](https://stackoverflow.com/)
 
 ## License
 Copyright 2020 Sally Perez
