@@ -45,8 +45,6 @@ function displayCities() {
 
 // requestWeather - make call to weatherAPI for city
 function requestWeather(city){
-
-    // TO DO - can I replace this with a call to google maps instead?
     // get coordinates from first query to maps
    var queryURL = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&appid=${apiKeyMap}`;
     //    console.log(queryURL);
@@ -57,25 +55,6 @@ function requestWeather(city){
           var lat = response.coord.lat;
           var lon = response.coord.lon;
           requestForecast(lat, lon);
-    });
-}
-
-// TO DO - maybe delete this or replace it up in requestWeather function...
-function getCoordinates(city){
-    var queryURL = `https://maps.googleapis.com/maps/api/geocode/json?address=${city}&key=${apiKeyGM}`;
-    // console.log(queryURL);
-    
-    // get lon and lat for city from google geocoding api
-    $.ajax({
-        url: queryURL,
-        method: "GET"
-      }).then(function(response) {
-          console.log(response.results[0].geometry.location);
-          var lat = response.results[0].geometry.location.lat;
-          var lon = response.results[0].geometry.location.lng;
-          var coords = `${lat} ${lon}`;
-          console.log(coords, typeof coords);
-          return coords;
     });
 }
 
@@ -197,6 +176,7 @@ function searchRequested (e) {
         // console.log(localStorage.getItem('cities'));
     } 
     displayCities();
+    cityEl.val("");
     localStorage.setItem("lastCity", currentCity);
 }
 
