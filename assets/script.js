@@ -55,7 +55,11 @@ function requestWeather(city){
           var lat = response.coord.lat;
           var lon = response.coord.lon;
           requestForecast(lat, lon);
-    });
+          console.log('call request forecast');
+      }).fail(function (response) { 
+            console.log("I got a 404!" + response);
+            // display error message
+      });
 }
 
 // requestForecast - use openweather onecall api to get current forecast, 5 day forecast and uv
@@ -63,15 +67,15 @@ function requestForecast(lat, lon) {
     var forecastURL = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKeyMap}`;
     // console.log(forecastURL);
     // run ajax query to openweather onecall API
+ 
     $.ajax({
         url: forecastURL,
         method: "GET"
-        }).then(function(response) {
+        })
+        .then(function(response) {
             // console.log(response);
             displayWeather(response);
             displayForecast(response);
-        }).fail(function (response) { // this isn't working...
-            console.log("I got a 404!");
         });
 }
 
