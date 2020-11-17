@@ -20,7 +20,7 @@ The default display shows Seattle weather information. The user can enter a city
 
 ## Screenshots
 Weather Dashboard: <br>
-![Weather Dashboard](.\assets\img\dashboard-screenshot.png)
+![Weather Dashboard](./assets/img/dashboard-screenshot.png)
 
 ## References
 The following libraries were used to style and/or create functionality:

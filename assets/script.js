@@ -91,7 +91,7 @@ function displayWeather(response) {
 
     // get image to display
     var icon = tempInfo.weather[0].icon;
-    var iconURL = `http://openweathermap.org/img/wn/${icon}.png`;
+    var iconURL = `http://openweathermap.org/img/w/${icon}.png`;
     var iconEl = $("<img>");
     iconEl.attr("src", iconURL);
 
@@ -135,7 +135,7 @@ function displayForecast(response) {
 
         // build img element for weather icon
         var icon = forecastArr[i].weather[0].icon;
-        var iconURL = `http://openweathermap.org/img/wn/${icon}.png`;
+        var iconURL = `http://openweathermap.org/img/w/${icon}.png`;
         var iconEl = $("<img>");
         iconEl.attr("src", iconURL);
 
