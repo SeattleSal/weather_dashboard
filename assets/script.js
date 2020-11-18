@@ -55,10 +55,29 @@ function requestWeather(city){
           var lat = response.coord.lat;
           var lon = response.coord.lon;
           requestForecast(lat, lon);
-          console.log('call request forecast');
-      }).fail(function (response) { 
-            console.log("I got a 404!" + response);
-            // display error message
+
+          // replace spaces with underscores for storage
+            var cityFormatted = currentCity.replace(/ /g, "_");
+
+            // add cities to local storage, if already stored do not add
+            storedCities = localStorage.getItem("cities") || "";
+            // console.log(`not stored? ${!storedCities.includes(cityFormatted)}`);
+            if (storedCities == "") {
+                localStorage.setItem('cities', cityFormatted);
+            } else if (typeof storedCities === "string" && !storedCities.includes(cityFormatted)) {
+                var x = [];
+                x.push(storedCities, cityFormatted);
+                localStorage.setItem('cities', x);
+                // console.log(localStorage.getItem('cities'));
+            } 
+            displayCities();
+            cityEl.val("");
+            localStorage.setItem("lastCity", currentCity); 
+
+      }).fail(function (error) { 
+        // display error message
+        $("form").trigger("reset");
+        alert("City not found!");
       });
 }
 
@@ -135,7 +154,7 @@ function displayForecast(response) {
         $(`#day${i}`).empty();
 
         // format date
-        var dateString = moment.unix(forecastArr[i].dt).format("MM/DD/YYYY");
+        var dateString = moment.unix(forecastArr[i].dt).format("MM/DD/YY");
 
         // build img element for weather icon
         var icon = forecastArr[i].weather[0].icon;
@@ -158,30 +177,16 @@ function searchRequested (e) {
     e.preventDefault();
     // if nothing is entered, exit function
     if(cityEl.val() == "") {
+        alert("Please enter a city");
         return;
     }
 
     currentCity = cityEl.val();
     currentCity = capitalize(currentCity);
+    // do something here to get an error
     requestWeather(currentCity);
 
-    // replace spaces with underscores for storage
-    var cityFormatted = currentCity.replace(/ /g, "_");
 
-    // add cities to local storage, if already stored do not add
-    storedCities = localStorage.getItem("cities") || "";
-    // console.log(`not stored? ${!storedCities.includes(cityFormatted)}`);
-    if (storedCities == "") {
-        localStorage.setItem('cities', cityFormatted);
-    } else if (typeof storedCities === "string" && !storedCities.includes(cityFormatted)) {
-        var x = [];
-        x.push(storedCities, cityFormatted);
-        localStorage.setItem('cities', x);
-        // console.log(localStorage.getItem('cities'));
-    } 
-    displayCities();
-    cityEl.val("");
-    localStorage.setItem("lastCity", currentCity);
 }
 
 // capitalize the string as String - do I need to keep this?
