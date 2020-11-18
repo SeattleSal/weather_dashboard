@@ -4,6 +4,9 @@
     background-color: #303c6c;
 }
 
+#citiesPast li:hover {
+    box-shadow: 0px 0px 1px blue;
+}
 
 
 
